@@ -62,5 +62,33 @@ app.post("/api/notes", async (req,res)=>{
         newTask
     })
 })
+
+/*
+========================================
+API Route: Get User Notes
+Method: GET
+Endpoint: /api/notes
+
+Ye API logged in user ke email ke basis par
+database se uske notes fetch karti hai.
+========================================
+*/
+
+app.get("/api/notes", async (req,res)=>{
+
+    // Logged in user ka email le rahe hain
+    let email = req.user.email
+
+    // User ke sare notes database se fetch kar rahe hain
+    let notes = await TaskModel.find({ email })
+
+    // Successful response
+    return res.status(200).json({
+        message:"Notes fetched successfully",
+        notes
+    })
+})
+
+
 // app ko export kar rahe hain taki dusri files me use kar sake
 module.exports = app;
