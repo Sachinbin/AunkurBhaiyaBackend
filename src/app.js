@@ -101,7 +101,7 @@ update karti hai.
 ========================================
 */
 
-app.post("/api/notes/update/:id", async (req, res) => {
+app.put("/api/notes/update/:id", async (req, res) => {
 
     // URL params se task ki id le rahe hain
     let { id } = req.params
