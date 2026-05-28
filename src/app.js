@@ -25,28 +25,28 @@ new task create karti hai.
 ========================================
 */
 
-app.post("/api/notes", async (req,res)=>{
+app.post("/api/notes", async (req, res) => {
 
-    let {title,description} = req.body
+    let { title, description } = req.body
 
     // Check karega ki koi field empty to nahi hai
-    if(!title || !description){
+    if (!title || !description) {
         return res.status(400).json({
-            message:"All fields are required"
+            message: "All fields are required"
         })
     }
 
     // Title minimum 3 characters ka hona chahiye
-    if(title.trim().length < 3){
-         return res.status(400).json({
-            message:"Title must be at least 3 characters"
+    if (title.trim().length < 3) {
+        return res.status(400).json({
+            message: "Title must be at least 3 characters"
         })
     }
 
     // Description minimum 10 characters ki honi chahiye
-    if(description.trim().length < 10){
-         return res.status(400).json({
-            message:"Description must be at least 10 characters"
+    if (description.trim().length < 10) {
+        return res.status(400).json({
+            message: "Description must be at least 10 characters"
         })
     }
 
@@ -58,7 +58,7 @@ app.post("/api/notes", async (req,res)=>{
 
     // Successful creation response
     return res.status(201).json({
-        message:"Task created successfully",
+        message: "Task created successfully",
         newTask
     })
 })
@@ -74,7 +74,7 @@ database se uske notes fetch karti hai.
 ========================================
 */
 
-app.get("/api/notes", async (req,res)=>{
+app.get("/api/notes", async (req, res) => {
 
     // Logged in user ka email le rahe hain
     let email = req.user.email
@@ -84,11 +84,84 @@ app.get("/api/notes", async (req,res)=>{
 
     // Successful response
     return res.status(200).json({
-        message:"Notes fetched successfully",
+        message: "Notes fetched successfully",
         notes
     })
 })
 
+
+/*
+========================================
+API Route: Update Note / Task
+Method: POST
+Endpoint: /api/notes/update/:id
+
+Ye API note ka id lekar existing task ko
+update karti hai.
+========================================
+*/
+
+app.post("/api/notes/update/:id", async (req, res) => {
+
+    // URL params se task ki id le rahe hain
+    let { id } = req.params
+
+    // Request body se updated data le rahe hain
+    let { title, description } = req.body
+
+    // Check karega ki MongoDB ObjectId valid hai ya nahi
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            message: "Invalid ID"
+        })
+    }
+
+    // Check karega ki koi field empty to nahi hai
+    if (!title || !description) {
+        return res.status(400).json({
+            message: "All fields are required"
+        })
+    }
+
+    // Title minimum 3 characters ka hona chahiye
+    if (title.trim().length < 3) {
+        return res.status(400).json({
+            message: "Title must be at least 3 characters"
+        })
+    }
+
+    // Description minimum 10 characters ki honi chahiye
+    if (description.trim().length < 10) {
+        return res.status(400).json({
+            message: "Description must be at least 10 characters"
+        })
+    }
+
+    // Database me existing task update kar rahe hain
+    let updatedTask = await TaskModel.findByIdAndUpdate(
+        id,
+        {
+            title,
+            description,
+        },
+        {
+            new: true
+        }
+    )
+
+    // Check karega ki task database me mila ya nahi
+    if (!updatedTask) {
+        return res.status(404).json({
+            message: "Task not found"
+        })
+    }
+
+    // Successful response
+    return res.status(200).json({
+        message: "Task updated successfully",
+        updatedTask
+    })
+})
 
 // app ko export kar rahe hain taki dusri files me use kar sake
 module.exports = app;
