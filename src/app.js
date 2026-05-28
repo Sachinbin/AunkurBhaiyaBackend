@@ -12,6 +12,7 @@ connectDB()
 
 // Express application ka instance create kar rahe hain
 let app = express()
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(cookieParser())
 
@@ -32,6 +33,7 @@ new task create karti hai.
 app.post("/api/notes", async (req, res) => {
 
     let { title, description } = req.body
+    let {email} = req.user.email
 
     // Check karega ki koi field empty to nahi hai
     if (!title || !description) {
@@ -58,6 +60,7 @@ app.post("/api/notes", async (req, res) => {
     let newTask = await TaskModel.create({
         title,
         description,
+        userMail:email
     })
 
     // Successful creation response
