@@ -1,3 +1,4 @@
+require('dotenv').config()
 // app file ko import kar rahe hain
 let app = require('./src/app')
 
